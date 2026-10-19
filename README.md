@@ -4,6 +4,17 @@ Eine responsive, deutschsprachige React-Anwendung für einen regulären Hauptjob
 
 ## Starten
 
+### Docker
+
+```bash
+docker build -t nettoklar .
+docker run --rm -p 8080:80 nettoklar
+```
+
+Die Anwendung ist dann unter http://localhost:8080 erreichbar. Der Container baut die statischen Dateien mit Node.js und liefert sie mit Nginx aus. Es werden weder Umgebungsvariablen noch persistente Volumes benötigt.
+
+### Lokal
+
 Node.js 20.19+ oder 22.12+ wird benötigt.
 
 ```bash
