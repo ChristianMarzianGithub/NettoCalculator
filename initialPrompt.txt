@@ -1,0 +1,262 @@
+# Task: Build a German Gross-to-Net Salary Calculator with Minijob Support
+
+You are an experienced full-stack developer with knowledge of German payroll taxation.
+
+Build a fully working, responsive web application that calculates the net income of an employee in Germany from their gross salary, including the option to add income from a Minijob.
+
+The application should work similarly to https://www.brutto-netto-rechner.info/ but with a cleaner interface and combined-income calculations.
+
+**IMPORTANT: This is a one-shot implementation. Implement everything autonomously. Do not ask clarifying questions, do not stop after planning, and do not require me to approve individual file changes. Create the project, install dependencies, implement the application, and run all available tests.**
+
+## 1. Technology stack
+
+Use:
+
+- React with TypeScript
+- Vite
+- Tailwind CSS
+- Client-side calculations wherever feasible
+- No database
+- No authentication
+- No backend unless absolutely necessary
+- No Docker
+- No unnecessary libraries
+
+This should be a simple, fast, locally runnable web application.
+
+## 2. Main functionality
+
+### Regular employment
+
+The user enters their gross salary and the application calculates their net income.
+
+Inputs:
+
+- Gross salary amount
+- Monthly or yearly salary selection
+- Tax year (default 2026)
+- Tax class (Steuerklasse I–VI)
+- Federal state (Bundesland)
+- Church tax (yes/no)
+- Number of children and relevant child allowances
+- Childless long-term care insurance surcharge eligibility
+- Age or birth year
+- Health insurance: statutory (GKV) or private (PKV)
+- Statutory health insurance additional contribution rate (Zusatzbeitrag)
+- Private health insurance contributions and relevant employer subsidy, if PKV is selected
+- Pension insurance obligation
+- Unemployment insurance obligation
+- Optional annual bonus or one-time payments
+
+Show:
+
+- Gross monthly salary
+- Wage tax (Lohnsteuer)
+- Solidarity surcharge (Solidaritätszuschlag)
+- Church tax (Kirchensteuer)
+- Health insurance (Krankenversicherung)
+- Pension insurance (Rentenversicherung)
+- Unemployment insurance (Arbeitslosenversicherung)
+- Long-term care insurance (Pflegeversicherung)
+- Total deductions
+- Net monthly salary
+- Net annual salary
+
+Also display the employee's total effective deduction percentage.
+
+### Minijob functionality
+
+Include an optional section named "Zusätzlicher Minijob".
+
+Inputs:
+
+- Enable/disable Minijob
+- Monthly Minijob gross income
+- Pension insurance exemption (Rentenversicherungspflicht befreit: yes/no)
+- Minijob taxation method: employer-paid flat-rate tax or individual taxation using payroll tax characteristics
+
+Implement the applicable German Minijob rules for the selected tax year.
+
+For 2026, validate the applicable regular monthly Minijob earnings limit, currently €603.
+
+Important considerations:
+
+- An eligible first Minijob alongside one social-insurance-liable main employment generally remains exempt from employee health, long-term care and unemployment insurance contributions.
+- The employee generally pays 3.6% pension insurance in a commercial Minijob unless exempt, subject to applicable minimum-contribution rules.
+- Under employer-paid flat-rate taxation, the 2% flat-rate tax is generally an employer expense and must not automatically be deducted from the employee's net income.
+- Individual taxation must be handled separately, without pretending it is always tax-free.
+- Handle earnings above the Minijob limit correctly, distinguishing occasional permitted fluctuations from regular employment and indicating when an arrangement no longer qualifies as a Minijob.
+- For the MVP, assume exactly one commercial Minijob alongside one regular employment. Clearly document exclusions, such as private-household Minijobs, multiple simultaneous Minijobs, and Midijob calculations.
+- Do not simply add Minijob gross income to the normal taxable salary in the standard flat-rate-tax scenario.
+
+Display:
+
+- Minijob gross monthly income
+- Employee pension contributions, if applicable
+- Employee tax withholding, if applicable
+- Minijob net monthly income
+- Combined net monthly income
+- Combined net annual income
+
+## 3. Results dashboard
+
+Display three summary cards:
+
+**Main employment**
+- Gross income
+- Total deductions
+- Net income
+
+**Minijob**
+- Gross income
+- Deductions
+- Net income
+
+**Combined**
+- Total gross income
+- Total deductions
+- Total net income
+
+The combined monthly net income should be the most prominent number on the page.
+
+Include a detailed breakdown of all deductions, showing where the money goes.
+
+## 4. UI/UX requirements
+
+- Modern, clean, responsive interface
+- German language throughout
+- Mobile-friendly
+- Light mode
+- Currency formatting in German locale (e.g., 3.245,67 €)
+- Clearly grouped input sections
+- Instant recalculation when input values change
+- No submit button needed
+- Sensible defaults, including tax class I, Nordrhein-Westfalen, no church tax, and statutory health insurance
+- Simple buttons to switch between monthly and yearly amounts
+- Explain important inputs with short tooltips
+- Show informative warnings for Minijob eligibility problems
+- Reset-to-defaults button
+
+All calculations should happen without sending personal salary information to any external service.
+
+## 5. Calculation correctness
+
+Accuracy matters more than visual complexity.
+
+Research and use authoritative German sources, including:
+
+- Bundesministerium der Finanzen (BMF) for official payroll-tax calculation algorithms
+- Official Programmablaufplan (PAP) for wage-tax calculations
+- Deutsche Rentenversicherung
+- Minijob-Zentrale
+- Official social insurance contribution rates and contribution ceilings
+
+Requirements:
+
+1. Implement wage-tax calculation using the official BMF payroll-tax algorithm for the relevant tax year, rather than a rough percentage approximation.
+2. Apply German social insurance contribution rates, contribution ceilings, and relevant statutory exceptions.
+3. Correctly apply church-tax rates depending on the state.
+4. Implement solidarity surcharge calculation and exemption thresholds.
+5. Account for relevant child-related care-insurance rules, including Saxony's special treatment.
+6. Clearly distinguish employee contributions from employer contributions.
+7. Keep tax rates, thresholds, contribution ceilings and calculation constants in a separate configuration module grouped by tax year.
+8. If a tax year cannot be implemented accurately, disable it rather than silently producing estimated results.
+9. Clearly state that this is an informational calculator, not legally binding payroll advice.
+
+Do not invent German tax rules or contribution rates.
+
+If necessary, use a reputable existing library with verifiable tax-year support, but document its source, license, assumptions and limitations. Do not use an unverified generic flat income-tax formula.
+
+## 6. Architecture
+
+Suggested project structure:
+
+src/
+- components/
+  - SalaryForm.tsx
+  - MinijobForm.tsx
+  - ResultSummary.tsx
+  - DeductionBreakdown.tsx
+- calculations/
+  - incomeTax.ts
+  - socialInsurance.ts
+  - minijob.ts
+  - calculateNet.ts
+- config/
+  - tax2026.ts
+- types/
+  - salary.ts
+- App.tsx
+- main.tsx
+
+Keep the calculation logic independent of React so it can be tested.
+
+Use explicit TypeScript types and avoid unnecessary abstractions.
+
+## 7. Tests
+
+Use Vitest and create automated unit tests.
+
+Include scenarios covering:
+
+- €2,000 monthly gross salary, tax class I
+- €3,000 monthly gross salary, tax class I
+- €4,000 monthly gross salary, tax class I
+- €6,000 monthly gross salary, tax class I
+- Employee with church tax
+- Different tax classes
+- Employee with children
+- Minijob earning €603 with pension insurance exemption
+- Minijob earning €603 without pension insurance exemption
+- Employee with €4,000 gross salary plus a €603 Minijob
+- Minijob exceeding the permitted regular monthly earnings limit
+- Correct handling of annual income, contribution ceilings, and monetary rounding
+
+Where possible, validate calculated results against official BMF examples or independently verifiable payroll calculations.
+
+## 8. Deliverables
+
+Create:
+
+- Fully working application
+- Complete source code
+- package.json with required dependencies
+- README.md with installation and running instructions
+- Automated tests
+- Documentation of calculation assumptions and excluded cases
+- Links to authoritative sources for payroll rules
+
+The app must start with:
+
+npm install
+npm run dev
+
+Tests must run with:
+
+npm run test
+
+And production compilation must work with:
+
+npm run build
+
+## 9. Execution instructions
+
+You have permission to create and modify all project files and run local installation, build, and test commands without asking me first.
+
+Work autonomously until the implementation is complete.
+
+Do not stop at a plan, skeleton, mockup, or pseudocode.
+
+If you discover implementation problems, fix them yourself.
+
+Before finishing:
+
+1. Run the tests.
+2. Run the production build.
+3. Fix TypeScript and build errors.
+4. Verify the main and Minijob calculations independently wherever possible.
+5. Report any unsupported scenarios transparently.
+
+Finish by providing a concise summary of what was implemented, how to start the application, what was tested, and any remaining accuracy limitations.
+
+**Prioritize a functional, accurate MVP over enterprise-level architecture.**
